@@ -30,7 +30,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'author_id',
+            [
+                'attribute' => 'author_id',
+                'value' => function($model) {
+                    return $model->author->username;
+                }
+            ],
             'title',
             'short',
             'content:ntext',
