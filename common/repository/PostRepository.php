@@ -40,10 +40,18 @@ class PostRepository implements IRepository
     /**
      * @inheritdoc
      */
-    public static function list($page_size = 10)
+    public static function list($page_size = 10, $author_id = null)
     {
+        //Check only author posts
+        if ($author_id) {
+            $query = Post::find()->where(['author_id' => $author_id]);
+        }
+        else {
+            $query = Post::find();
+        }
+
         return new ActiveDataProvider([
-            'query' => Post::find(),
+            'query' => $query,
             'pagination' => [
                 'pageSize' => $page_size,
             ],
@@ -91,5 +99,10 @@ class PostRepository implements IRepository
         }
         
         return false;
+    }
+
+    public static function isAuthor($id)
+    {   
+        return self::getOne($id)->author_id == Yii::$app->user->id;
     }
 }

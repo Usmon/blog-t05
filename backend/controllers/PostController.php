@@ -22,11 +22,20 @@ class PostController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
+                'only' => ['update', 'delete', 'view'],
                 'rules' => [
                     [
-                        'actions' => [],
                         'allow' => true,
+                        'actions' => ['update', 'delete', 'view'],
                         'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            $id = Yii::$app->request->get('id');
+                            if (Yii::$app->user->can('admin') || PostRepository::isAuthor($id)) {
+                                return true;
+                            }
+
+                            return false;
+                        }
                     ],
                 ],
             ],
@@ -45,7 +54,12 @@ class PostController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = PostRepository::list();
+        if (Yii::$app->user->can('admin')) {
+            $dataProvider = PostRepository::list(10);
+        }
+        else {
+            $dataProvider = PostRepository::list(10, Yii::$app->user->id);
+        }
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -93,7 +107,7 @@ class PostController extends Controller
     public function actionUpdate($id)
     {
         $model = PostRepository::getOne($id);
-        
+
         if (PostRepository::update($id, Yii::$app->request->post())) {
             return $this->redirect(['view', 'id' => $id]);
         }
