@@ -49,7 +49,7 @@ class Post extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'author_id' => 'Author ID',
+            'author_id' => 'Author',
             'title' => 'Title',
             'short' => 'Short',
             'content' => 'Content',
