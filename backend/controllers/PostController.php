@@ -108,7 +108,17 @@ class PostController extends Controller
     {
         $model = PostRepository::getOne($id);
 
+        if (Yii::$app->request->isAjax && !Yii::$app->request->post()) {
+            return $this->renderPartial('update', [
+                'model' => $model,
+            ]);
+        } 
+
         if (PostRepository::update($id, Yii::$app->request->post())) {
+            if (Yii::$app->request->isAjax) {
+                return json_encode(true);
+            }
+
             return $this->redirect(['view', 'id' => $id]);
         }
 

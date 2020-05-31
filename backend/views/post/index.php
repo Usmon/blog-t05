@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
@@ -17,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Post', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php Pjax::begin(); ?>
+    <?php Pjax::begin(['id' => 'post-index-pjax']); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -35,10 +36,27 @@ $this->params['breadcrumbs'][] = $this->title;
             //'created_at',
             //'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'buttons' => [
+                    'update' => function ($url, $model, $key) {
+                        return Html::a('<i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>', $url, ['class' => 'btn-update']);
+                    }
+                ]
+            ],
         ],
     ]); ?>
 
     <?php Pjax::end(); ?>
 
 </div>
+<!-- Modal for edit form -->
+<?php
+    Modal::begin([
+        'id' => 'post_edit_modal',
+        'header' => 'Edit',
+        'size' => Modal::SIZE_LARGE,
+    ]);
+   
+   Modal::end();
+?>
